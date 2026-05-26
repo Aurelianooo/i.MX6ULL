@@ -1,0 +1,12 @@
+#
+# compile
+nasm -f elf XXX.asm 
+
+# link
+ld -m elf_i386 -s -o XXX XXX.o
+
+# delete executable file
+find /path/to/directory -type f -executable -delete
+
+# delete object file
+find . -name "*.o" | xargs rm -f
