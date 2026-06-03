@@ -1,14 +1,11 @@
 .global _start
 
-.global _bss_start
-_bss_start :
-    .word __bss_start
-
-.global _bss_end
-_bss_end :
-    .word __bss_end
-
 _start:
+    @ 第一时间关闭看门狗
+    ldr r0, =0x020BC000
+    mov r1, #0
+    str r1, [r0]
+
     @设置SVC模式
     mrs r0, cpsr
     bic r0, r0, #0x1F
@@ -16,8 +13,8 @@ _start:
     msr cpsr, r0
 
     @清除.bss段
-    ldr r0, =_bss_start
-    ldr r1, =_bss_end
+    ldr r0, =__bss_start
+    ldr r1, =__bss_end
     mov r2, #0
 
 clear_bss:
