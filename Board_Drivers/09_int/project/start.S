@@ -1,11 +1,6 @@
 .global _start
 
 _start:
-    @ 第一时间关闭看门狗
-    ldr r0, =0x020BC000
-    mov r1, #0
-    str r1, [r0]
-
     @ 设置中断向量表地址
     ldr pc, =Reset_Handler
     ldr pc, =Undefined_Handler
@@ -18,6 +13,10 @@ _start:
 
 @ 复位
 Reset_Handler:
+    @ 第一时间关闭看门狗
+    ldr r0, =0x020BC000
+    mov r1, #0
+    str r1, [r0]
 
     cpsid i  @ 关闭IRQ中断
 
