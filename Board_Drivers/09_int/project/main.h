@@ -6,5 +6,7 @@
 #include "bsp_delay.h"
 #include "bsp_beep.h"
 #include "bsp_key.h"
+#include "bsp_int.h"
+#include "bsp_exti.h"
 
 #endif /* __MAIN_H */

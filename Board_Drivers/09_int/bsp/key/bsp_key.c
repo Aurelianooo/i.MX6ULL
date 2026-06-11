@@ -11,6 +11,8 @@ void key_init(void)
         .direction = kGPIO_DigitalInput,
     };
     gpio_init(GPIO1, 18, &key_config);
+
+
 }
 
 int get_key_val(void)

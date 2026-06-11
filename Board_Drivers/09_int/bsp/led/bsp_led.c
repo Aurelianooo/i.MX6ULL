@@ -9,7 +9,7 @@ void led_init(void)
 
     /* 配置GPIO */
     GPIO1->GDIR |= (1 << 3);
-    GPIO1->DR &= ~(1 << 3);
+    GPIO1->DR |= (1 << 3);  /* 默认关闭 */
 }
 
 void led_on(void)

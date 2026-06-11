@@ -3,6 +3,7 @@
 
 #include "MCIMX6Y2.h"
 #include "fsl_common.h"
+#include "core_ca7.h"
 
 /*!
  * @addtogroup iomuxc_driver

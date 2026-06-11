@@ -29,6 +29,7 @@ Reset_Handler:
     bic r0, r0, #(0x1<<0)   @ 关闭MMU
     MCR p15, 0, r0, c1, c0, 0
 
+#if 0
     @ 设置中断向量偏移
     ldr r0, =0x87800000
     dsb
@@ -36,6 +37,7 @@ Reset_Handler:
     MCR p15, 0, r0, c12, c0, 0  @ 设置VBAR寄存器
     dsb
     isb
+#endif
 
     @ 清除.bss段
     ldr r0, =__bss_start
@@ -100,8 +102,33 @@ Reserved_Handler:
 
 @ IRQ
 IRQ_Handler:
-    ldr r0, =IRQ_Handler
-    bx r0
+    push {lr}
+    push {r0-r3, r12}   @ 保存现场
+
+    mrs r0, spsr
+    push {r0}          @ 保存SPSR
+
+    mrc p15, 4, r1, c15, c0, 0  @ 读取CBAR寄存器中GIC内存映射首地址
+    add r1, r1, #0x2000  @ GIC的CPU接口寄存器偏移地址
+    ldr r0, [r1, #0x0c]  @ 读取GICC_IAR寄存器，获取中断ID
+    push {r0, r1}  @ 保存中断ID和GIC基地址
+
+    cps #0x13  @ 切换到SVC模式
+    push {lr}
+    ldr r2, =system_irqhandler
+    blx r2  @ 调用系统中断处理函数
+
+    pop {lr}
+    cps #0x12  @ 切换回IRQ模式
+    pop {r0, r1}  @ 恢复中断ID和GIC基地址
+    str r0, [r1, #0x10]  @ 写回GICC_EOIR寄存器，完成中断处理
+
+    pop {r0}  @ 恢复SPSR
+    msr spsr_cxsf, r0  @ 恢复SPSR
+
+    pop {r0-r3, r12}   @ 恢复现场
+    pop {lr}
+    subs pc, lr, #4 @ 将lr-4赋值给pc
 
 @ FIQ
 FIQ_Handler:
